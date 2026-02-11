@@ -1,0 +1,53 @@
+// This is your Prisma schema file
+datasource db {
+  provider = "postgresql"
+ // url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User Model: Stores profile and auth info
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  name           String
+  bio            String?
+  skills         Skill[]  // Relation: A user can list many skills
+  tradesSent     Trade[]  @relation("Requester")
+  tradesReceived Trade[]  @relation("Provider")
+  createdAt      DateTime @default(now())
+}
+
+// Skill Model: What users offer
+model Skill {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  trades      Trade[]
+}
+
+// Trade Model: The transaction between two users
+model Trade {
+  id           String      @id @default(uuid())
+  status       TradeStatus @default(PENDING)
+  requesterId  String
+  requester    User        @relation("Requester", fields: [requesterId], references: [id])
+  providerId   String
+  provider     User        @relation("Provider", fields: [providerId], references: [id])
+  skillId      String
+  skill        Skill       @relation(fields: [skillId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+
+enum TradeStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
