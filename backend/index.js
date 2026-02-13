@@ -14,7 +14,7 @@ app.get("/api/health", (req, res) => {
   return res.json({ test: "ok" });
 });
 app.use("/api/auth", authRoutes);
-app.use("/api", skillRoutes);
+app.use("/api/skills", skillRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>

@@ -19,3 +19,27 @@ export const createSkill = async (req, res) => {
       .json({ message: "Error creating skill", detail: error.message });
   }
 };
+
+export const getAllSkills = async (req, res) => {
+  try {
+    const skills = await prisma.skill.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.status(200).json(skills);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching skills", detail: error.message });
+  }
+};
