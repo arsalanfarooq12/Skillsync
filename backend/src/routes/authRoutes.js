@@ -1,9 +1,6 @@
 import express from "express";
 import { register, login } from "../controllers/authController.js";
-import {
-  registerValidation,
-  loginValidation,
-} from "../middlewares/validators.js";
+
 import { rateLimit } from "express-rate-limit";
 import { validate } from "../middlewares/validate.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
