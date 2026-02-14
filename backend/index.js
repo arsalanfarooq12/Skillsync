@@ -6,7 +6,7 @@ import { rateLimit } from "express-rate-limit";
 import authRoutes from "./src/routes/authRoutes.js";
 import skillRoutes from "./src/routes/skillRoutes.js";
 import { globalErrorHandler } from "./src/middlewares/errorMiddleware.js";
-import AppError from "./src/utils/appError.js";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
@@ -14,6 +14,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.set("trust proxy", 1);
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -34,12 +35,10 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/skills", skillRoutes);
 app.use((req, res) => {
-  res
-    .status(404)
-    .json({
-      Route: "Not Found",
-      message: "The requested route does not exist",
-    });
+  res.status(404).json({
+    Route: "Not Found",
+    message: "The requested route does not exist",
+  });
 });
 app.use(globalErrorHandler);
 const PORT = process.env.PORT || 3000;

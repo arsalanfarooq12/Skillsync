@@ -1,17 +1,17 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { validationResult } from "express-validator";
-import prisma from "../lib/prisma.js";
 
+import prisma from "../lib/prisma.js";
+import { generateTokens } from "../utils/generateToken.js";
+import catchAsync from "../utils/catchAsync.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const register = async (req, res) => {
+export const register = catchAsync(async (req, res) => {
   const { email, password, name } = req.body;
 
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+    if (existingUser) return next(new AppError("Email already in use", 400));
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,32 +25,63 @@ export const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+});
 
-export const login = async (req, res) => {
+export const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ message: "Invalid Credentials" });
+    if (!user) return next(new AppError("Invalid Credentials", 400));
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid Credentials" });
+    if (!isMatch) return next(new AppError("Invalid Credentials", 400));
+    const { accessToken, refreshToken } = generateTokens(user.id);
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, name: user.name },
-      JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only over HTTPS
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
-    res.json({
+    res.status(200).json({
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+});
+
+export const refresh = catchAsync(async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return next(new AppError("No refresh token found", 401));
+  }
+
+  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+  const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+  if (!user) return next(new AppError("User no longer exists", 401));
+
+  const tokens = generateTokens(user.id);
+
+  res.status(200).json({
+    accessToken: tokens.accessToken,
+  });
+});
+
+export const logout = catchAsync(async (req, res) => {
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    expires: new Date(0), // Expire immediately
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  res
+    .status(200)
+    .json({ status: "success", message: "Logged out successfully" });
+});
