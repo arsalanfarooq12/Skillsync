@@ -5,7 +5,8 @@ import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import authRoutes from "./src/routes/authRoutes.js";
 import skillRoutes from "./src/routes/skillRoutes.js";
-
+import { globalErrorHandler } from "./src/middlewares/errorMiddleware.js";
+import AppError from "./src/utils/appError.js";
 dotenv.config();
 
 const app = express();
@@ -30,8 +31,17 @@ app.get("/api/health", (req, res) => {
   return res.json({ test: "ok" });
 });
 app.use("/api/auth", authRoutes);
-app.use("/api/skills", skillRoutes);
 
+app.use("/api/skills", skillRoutes);
+app.use((req, res) => {
+  res
+    .status(404)
+    .json({
+      Route: "Not Found",
+      message: "The requested route does not exist",
+    });
+});
+app.use(globalErrorHandler);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(` SkillSync Backend running on port ${PORT}`)
