@@ -3,10 +3,11 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
-import authRoutes from "./src/routes/authRoutes.js";
-import skillRoutes from "./src/routes/skillRoutes.js";
 import { globalErrorHandler } from "./src/middlewares/errorMiddleware.js";
 import cookieParser from "cookie-parser";
+import authRoutes from "./src/routes/authRoutes.js";
+import skillRoutes from "./src/routes/skillRoutes.js";
+import tradeRoutes from "./src/routes/tradeRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -34,6 +35,8 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/skills", skillRoutes);
+
+app.use("/api/trades", tradeRoutes);
 app.use((req, res) => {
   res.status(404).json({
     Route: "Not Found",
