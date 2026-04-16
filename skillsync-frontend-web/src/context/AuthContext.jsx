@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (token) {
       api
-        .get("/auth/me")
+        .get("/auth/login")
         .then((res) => setUser(res.data.user))
         .catch(() => {
           setToken(null);
