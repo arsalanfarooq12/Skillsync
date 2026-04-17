@@ -7,13 +7,18 @@ function TradesPage() {
 
   const [trades, setTrades] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [newSkill, setNewSkill] = useState({ name: "", description: "" });
-  const [loadingTrades, setLoadingTrades] = useState(true);
+  const [newSkill, setNewSkill] = useState({
+    title: "",
+    description: "",
+    category: "",
+  });
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!user) return;
     fetchData();
-  }, []);
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -21,12 +26,15 @@ function TradesPage() {
         api.get("/trades/my-trades"),
         api.get("/skills"),
       ]);
-      setTrades(tradesRes.data.trades);
-      setSkills(skillsRes.data.skills);
+
+      setTrades(tradesRes.data.data || []);
+      setSkills(skillsRes.data.data || []);
     } catch (err) {
-      setError("Failed to load data");
+      setError(
+        err.response?.data?.message || err.message || "Failed to load data"
+      );
     } finally {
-      setLoadingTrades(false);
+      setLoading(false);
     }
   };
 
@@ -34,37 +42,45 @@ function TradesPage() {
     e.preventDefault();
     try {
       await api.post("/skills/add", newSkill);
-      setNewSkill({ name: "", description: "" });
-      fetchData();
+      setNewSkill({ title: "", description: "", category: "" });
+      await fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to add skill");
+      setError(
+        err.response?.data?.message || err.message || "Failed to add skill"
+      );
     }
   };
 
-  const handleRequestTrade = async (skillId) => {
+  const handleRequestTrade = async (skillId, providerId) => {
     try {
-      await api.post("/trades/request", { skillId });
-      fetchData();
+      await api.post("/trades/request", { skillId, providerId });
+      await fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to request trade");
+      setError(
+        err.response?.data?.message || err.message || "Failed to request trade"
+      );
     }
   };
 
   const handleUpdateStatus = async (tradeId, status) => {
     try {
       await api.patch(`/trades/${tradeId}/status`, { status });
-      fetchData();
+      await fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update trade");
+      setError(
+        err.response?.data?.message || err.message || "Failed to update trade"
+      );
     }
   };
 
   const incomingTrades = trades.filter(
-    (t) => t.providerId === user.id && t.status === "PENDING"
+    (t) => t.providerId === user?.id && t.status === "PENDING"
   );
-  const myTrades = trades.filter((t) => t.requesterId === user.id);
 
-  if (loadingTrades) return <p style={styles.center}>Loading...</p>;
+  const myTrades = trades.filter((t) => t.requesterId === user?.id);
+
+  if (loading) return <p style={styles.center}>Loading...</p>;
+  if (!user) return <p style={styles.center}>Please login again.</p>;
 
   return (
     <div style={styles.page}>
@@ -82,16 +98,15 @@ function TradesPage() {
         {error && <p style={styles.error}>{error}</p>}
 
         <div style={styles.grid}>
-          {/* Add a skill */}
           <section style={styles.section}>
             <h2 style={styles.sectionTitle}>Add a skill</h2>
             <form onSubmit={handleAddSkill} style={styles.form}>
               <input
                 style={styles.input}
-                placeholder="Skill name"
-                value={newSkill.name}
+                placeholder="Skill title"
+                value={newSkill.title}
                 onChange={(e) =>
-                  setNewSkill((p) => ({ ...p, name: e.target.value }))
+                  setNewSkill((p) => ({ ...p, title: e.target.value }))
                 }
                 required
               />
@@ -102,6 +117,16 @@ function TradesPage() {
                 onChange={(e) =>
                   setNewSkill((p) => ({ ...p, description: e.target.value }))
                 }
+                required
+              />
+              <input
+                style={styles.input}
+                placeholder="Category"
+                value={newSkill.category}
+                onChange={(e) =>
+                  setNewSkill((p) => ({ ...p, category: e.target.value }))
+                }
+                required
               />
               <button style={styles.button} type="submit">
                 Add skill
@@ -109,23 +134,22 @@ function TradesPage() {
             </form>
           </section>
 
-          {/* Browse skills */}
           <section style={styles.section}>
             <h2 style={styles.sectionTitle}>Browse skills</h2>
             {skills.length === 0 && (
               <p style={styles.empty}>No skills listed yet.</p>
             )}
-            {skills.map((skill) => (
+            {(skills || []).map((skill) => (
               <div key={skill.id} style={styles.card}>
                 <div>
-                  <p style={styles.cardTitle}>{skill.name}</p>
+                  <p style={styles.cardTitle}>{skill.title}</p>
                   <p style={styles.cardSub}>{skill.description}</p>
                   <p style={styles.cardOwner}>by {skill.user?.name}</p>
                 </div>
                 {skill.userId !== user.id && (
                   <button
                     style={styles.smallBtn}
-                    onClick={() => handleRequestTrade(skill.id)}
+                    onClick={() => handleRequestTrade(skill.id, skill.userId)}
                   >
                     Request swap
                   </button>
@@ -134,16 +158,15 @@ function TradesPage() {
             ))}
           </section>
 
-          {/* Incoming requests */}
           <section style={styles.section}>
             <h2 style={styles.sectionTitle}>Incoming requests</h2>
             {incomingTrades.length === 0 && (
               <p style={styles.empty}>No pending requests.</p>
             )}
-            {incomingTrades.map((trade) => (
+            {(incomingTrades || []).map((trade) => (
               <div key={trade.id} style={styles.card}>
                 <div>
-                  <p style={styles.cardTitle}>{trade.skill?.name}</p>
+                  <p style={styles.cardTitle}>{trade.skill?.title}</p>
                   <p style={styles.cardSub}>from {trade.requester?.name}</p>
                 </div>
                 <div style={{ display: "flex", gap: "8px" }}>
@@ -164,16 +187,15 @@ function TradesPage() {
             ))}
           </section>
 
-          {/* My sent trades */}
           <section style={styles.section}>
             <h2 style={styles.sectionTitle}>My requests</h2>
             {myTrades.length === 0 && (
               <p style={styles.empty}>No requests sent yet.</p>
             )}
-            {myTrades.map((trade) => (
+            {(myTrades || []).map((trade) => (
               <div key={trade.id} style={styles.card}>
                 <div>
-                  <p style={styles.cardTitle}>{trade.skill?.name}</p>
+                  <p style={styles.cardTitle}>{trade.skill?.title}</p>
                   <p style={styles.cardSub}>to {trade.provider?.name}</p>
                 </div>
                 <span style={{ ...styles.badge, ...statusColor(trade.status) }}>

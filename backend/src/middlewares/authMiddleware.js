@@ -13,15 +13,15 @@ export const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = {
-        id: decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-      };
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id },
+        select: { id: true, email: true, name: true },
+      });
 
-      //   if (!req.user) {
-      //     return res.status(401).json({ message: "User no longer exists." });
-      //   }
+      if (!user) {
+        return res.status(401).json({ message: "User no longer exists." });
+      }
+      req.user = user;
 
       next();
     } catch (error) {

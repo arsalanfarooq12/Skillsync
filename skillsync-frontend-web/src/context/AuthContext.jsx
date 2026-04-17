@@ -9,18 +9,25 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      api
-        .get("/auth/login")
-        .then((res) => setUser(res.data.user))
-        .catch(() => {
-          setToken(null);
-          localStorage.removeItem("accessToken");
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    const init = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await api.get("/auth/me");
+
+        setUser(res.data);
+      } catch {
+        setToken(null);
+        localStorage.removeItem("accessToken");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
   }, []);
 
   const login = (userData, accessToken) => {

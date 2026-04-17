@@ -3,8 +3,15 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 
 export const createSkill = catchAsync(async (req, res, next) => {
-  const { title, description, category } = req.body;
+  // debug console
 
+  console.log("req.user:", req.user);
+  console.log("req.body:", req.body);
+
+  const { title, description, category } = req.body;
+  if (!req.user) {
+    return next(new AppError("Unauthorized", 401));
+  }
   const newSkill = await prisma.skill.create({
     data: {
       title,

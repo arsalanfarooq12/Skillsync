@@ -4,6 +4,7 @@ import {
   login,
   refresh,
   logout,
+  me,
 } from "../controllers/authController.js";
 
 import { rateLimit } from "express-rate-limit";
@@ -24,4 +25,5 @@ router.post("/register", authLimiter, validate(registerSchema), register);
 router.post("/login", authLimiter, validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
+router.get("/me", me);
 export default router;

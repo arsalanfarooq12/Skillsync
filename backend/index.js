@@ -17,6 +17,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
@@ -24,7 +25,7 @@ app.use(cookieParser());
 app.set("trust proxy", 1);
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100,
+  limit: 200,
   message: {
     message:
       "Too many requests from this IP, please try again after 15 minutes",

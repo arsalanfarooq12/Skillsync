@@ -27,7 +27,7 @@ export const register = catchAsync(async (req, res) => {
   }
 });
 
-export const login = catchAsync(async (req, res) => {
+export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -85,4 +85,10 @@ export const logout = catchAsync(async (req, res) => {
   res
     .status(200)
     .json({ status: "success", message: "Logged out successfully" });
+});
+
+export const me = catchAsync(async (req, res) => {
+  res.status(200).json({
+    user: req.user,
+  });
 });
