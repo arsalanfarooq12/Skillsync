@@ -13,7 +13,9 @@ import { createSkillSchema } from "../validations/skillValidation.js";
 const router = express.Router();
 router.get("/", getAllSkills);
 
-router.post("/add", protect, validate(createSkillSchema), createSkill);
+router.post("/add", protect, createSkill);
 router.patch("/:id", protect, updateSkill);
 router.delete("/:id", protect, deleteSkill);
 export default router;
+
+// validate(createSkillSchema)

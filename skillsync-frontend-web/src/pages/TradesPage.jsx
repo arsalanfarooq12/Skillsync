@@ -1,3 +1,5 @@
+//  this is the dashboard page where users can see their trades, incoming requests,
+// and browse skills to request swaps.
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/apiClient";
@@ -16,10 +18,12 @@ function TradesPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     fetchData();
-  }, [user]);
-
+  }, [user?.id]);
+  // this function fetches both the user's trades and the list of all skills when the component mounts or
+  //  when the user changes. It uses Promise.all to make both API calls in parallel, improving performance.
+  //  The results are stored in state variables, and any errors are captured and displayed to the user.
   const fetchData = async () => {
     try {
       const [tradesRes, skillsRes] = await Promise.all([
@@ -27,8 +31,8 @@ function TradesPage() {
         api.get("/skills"),
       ]);
 
-      setTrades(tradesRes.data.data || []);
-      setSkills(skillsRes.data.data || []);
+      setTrades(tradesRes.data || []);
+      setSkills(skillsRes.data || []);
     } catch (err) {
       setError(
         err.response?.data?.message || err.message || "Failed to load data"
@@ -37,7 +41,9 @@ function TradesPage() {
       setLoading(false);
     }
   };
-
+  // This function handles the submission of the form to add a new skill.
+  //  It sends a POST request to the API with the new skill data, and if successful,
+  //  it resets the form and refreshes the data. If there's an error, it captures and displays the error message.
   const handleAddSkill = async (e) => {
     e.preventDefault();
     try {
@@ -50,7 +56,17 @@ function TradesPage() {
       );
     }
   };
-
+  //
+  const handleDeleteSkill = async (skillId) => {
+    try {
+      await api.delete(`/skills/${skillId}`);
+      await fetchData();
+    } catch (err) {
+      setError(
+        err.response?.data?.message || err.message || "Failed to delete skill"
+      );
+    }
+  };
   const handleRequestTrade = async (skillId, providerId) => {
     try {
       await api.post("/trades/request", { skillId, providerId });
@@ -72,7 +88,10 @@ function TradesPage() {
       );
     }
   };
-
+  //  The component filters the trades into two categories: incomingTrades,
+  //  which are pending trade requests where the current user is the provider,
+  // and myTrades, which are all trade requests initiated by the current user.
+  // This allows the UI to display these two sets of trades separately for better user experience.
   const incomingTrades = trades.filter(
     (t) => t.providerId === user?.id && t.status === "PENDING"
   );
@@ -95,7 +114,7 @@ function TradesPage() {
       </header>
 
       <main style={styles.main}>
-        {error && <p style={styles.error}>{error}</p>}
+        {/* {error && <p style={styles.error}>{error}</p>} */}
 
         <div style={styles.grid}>
           <section style={styles.section}>
@@ -119,43 +138,66 @@ function TradesPage() {
                 }
                 required
               />
-              <input
+              <select
                 style={styles.input}
-                placeholder="Category"
                 value={newSkill.category}
                 onChange={(e) =>
                   setNewSkill((p) => ({ ...p, category: e.target.value }))
                 }
                 required
-              />
+              >
+                <option value="">Select category</option>
+                <option value="Programming">Programming</option>
+                <option value="Music">Music</option>
+                <option value="Design">Design</option>
+                <option value="Language">Language</option>
+                <option value="Other">Other</option>
+              </select>
               <button style={styles.button} type="submit">
                 Add skill
               </button>
             </form>
           </section>
-
           <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Browse skills</h2>
-            {skills.length === 0 && (
-              <p style={styles.empty}>No skills listed yet.</p>
-            )}
-            {(skills || []).map((skill) => (
-              <div key={skill.id} style={styles.card}>
-                <div>
-                  <p style={styles.cardTitle}>{skill.title}</p>
-                  <p style={styles.cardSub}>{skill.description}</p>
-                  <p style={styles.cardOwner}>by {skill.user?.name}</p>
-                </div>
-                {skill.userId !== user.id && (
-                  <button
-                    style={styles.smallBtn}
-                    onClick={() => handleRequestTrade(skill.id, skill.userId)}
-                  >
-                    Request swap
-                  </button>
-                )}
-              </div>
-            ))}
+            <div style={styles.trades}>
+              <h2 style={styles.sectionTitle}>Browse skills</h2>
+
+              {skills.length > 0 ? (
+                skills.map((skill) => (
+                  <div key={skill.id} style={styles.card}>
+                    <div>
+                      <p style={styles.cardTitle}>{skill.title}</p>
+                      <p style={styles.cardSub}>{skill.description}</p>
+                      <p style={styles.cardOwner}>by {skill.user?.name}</p>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      {skill.userId !== user?.id && (
+                        <button
+                          style={styles.smallBtn}
+                          onClick={() =>
+                            handleRequestTrade(skill.id, skill.userId)
+                          }
+                        >
+                          Request swap
+                        </button>
+                      )}
+
+                      {skill.userId === user?.id && (
+                        <button
+                          style={{ ...styles.smallBtn, background: "#dc2626" }}
+                          onClick={() => handleDeleteSkill(skill.id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p style={styles.empty}>No skills listed yet.</p>
+              )}
+            </div>
           </section>
 
           <section style={styles.section}>
@@ -163,12 +205,14 @@ function TradesPage() {
             {incomingTrades.length === 0 && (
               <p style={styles.empty}>No pending requests.</p>
             )}
-            {(incomingTrades || []).map((trade) => (
+
+            {incomingTrades.map((trade) => (
               <div key={trade.id} style={styles.card}>
                 <div>
                   <p style={styles.cardTitle}>{trade.skill?.title}</p>
                   <p style={styles.cardSub}>from {trade.requester?.name}</p>
                 </div>
+
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button
                     style={{ ...styles.smallBtn, background: "#16a34a" }}
@@ -192,12 +236,14 @@ function TradesPage() {
             {myTrades.length === 0 && (
               <p style={styles.empty}>No requests sent yet.</p>
             )}
-            {(myTrades || []).map((trade) => (
+
+            {myTrades.map((trade) => (
               <div key={trade.id} style={styles.card}>
                 <div>
                   <p style={styles.cardTitle}>{trade.skill?.title}</p>
                   <p style={styles.cardSub}>to {trade.provider?.name}</p>
                 </div>
+
                 <span style={{ ...styles.badge, ...statusColor(trade.status) }}>
                   {trade.status}
                 </span>
@@ -219,6 +265,11 @@ const statusColor = (status) => {
 };
 
 const styles = {
+  trades: {
+    maxHeight: "70vh",
+    overflow: "scroll",
+  },
+
   page: { minHeight: "100vh", background: "#f4f4f5" },
   header: {
     display: "flex",

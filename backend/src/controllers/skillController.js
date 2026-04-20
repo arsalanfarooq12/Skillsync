@@ -5,8 +5,7 @@ import AppError from "../utils/appError.js";
 export const createSkill = catchAsync(async (req, res, next) => {
   // debug console
 
-  console.log("req.user:", req.user);
-  console.log("req.body:", req.body);
+  console.log(" backckend _skillController.js : req.user:  ", req.user);
 
   const { title, description, category } = req.body;
   if (!req.user) {

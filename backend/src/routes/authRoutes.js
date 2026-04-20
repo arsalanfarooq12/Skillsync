@@ -10,6 +10,7 @@ import {
 import { rateLimit } from "express-rate-limit";
 import { validate } from "../middlewares/validate.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
+import { protect } from "../middlewares/authMiddleware.js";
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 5,
@@ -25,5 +26,5 @@ router.post("/register", authLimiter, validate(registerSchema), register);
 router.post("/login", authLimiter, validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
-router.get("/me", me);
+router.get("/me", protect, me);
 export default router;

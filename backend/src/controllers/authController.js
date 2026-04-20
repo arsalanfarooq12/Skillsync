@@ -86,9 +86,11 @@ export const logout = catchAsync(async (req, res) => {
     .status(200)
     .json({ status: "success", message: "Logged out successfully" });
 });
-
+//  Get My Profile
 export const me = catchAsync(async (req, res) => {
   res.status(200).json({
-    user: req.user,
+    id: req.user.id,
+    name: req.user.name,
+    email: req.user.email,
   });
 });
