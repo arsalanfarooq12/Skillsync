@@ -70,6 +70,15 @@ export const updateSkill = catchAsync(async (req, res, next) => {
 
 export const deleteSkill = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  const relatedTrades = await prisma.trade.findMany({
+    where: { skillId: id },
+  });
+
+  if (relatedTrades.length > 0) {
+    return next(
+      new AppError("Cannot delete skill because it has related trades", 400)
+    );
+  }
 
   const skill = await prisma.skill.findUnique({
     where: { id: id },

@@ -87,3 +87,28 @@ export const updateTradeStatus = catchAsync(async (req, res, next) => {
 
   res.status(200).json(updatedTrade);
 });
+
+export const deleteTrade = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  const trade = await prisma.trade.findUnique({
+    where: { id },
+  });
+
+  if (!trade) {
+    return next(new AppError("Trade not found", 404));
+  }
+  if (trade.status !== "PENDING") {
+    return next(new AppError("Only pending trades can be deleted", 400));
+  }
+  if (trade.requesterId !== userId && trade.providerId !== userId) {
+    return next(new AppError("Not authorized to delete this trade", 403));
+  }
+
+  await prisma.trade.delete({
+    where: { id },
+  });
+
+  res.status(200).json({ message: "Trade request deleted successfully" });
+});

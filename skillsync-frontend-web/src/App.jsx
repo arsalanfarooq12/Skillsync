@@ -10,7 +10,7 @@ import TradesPage from "./pages/TradesPage";
 function App() {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={4000} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/trades" replace />} />

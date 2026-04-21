@@ -58,13 +58,20 @@ function TradesPage() {
   };
   //
   const handleDeleteSkill = async (skillId) => {
-    try {
-      await api.delete(`/skills/${skillId}`);
-      await fetchData();
-    } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Failed to delete skill"
-      );
+    const ok = await confirmAction({
+      title: "Delete this skill?",
+      text: "This will remove the skill permanently.",
+      confirmButtonText: "Delete",
+    });
+    if (!ok) {
+      try {
+        await api.delete(`/skills/${skillId}`);
+        await fetchData();
+      } catch (err) {
+        setError(
+          err.response?.data?.message || err.message || "Failed to delete skill"
+        );
+      }
     }
   };
   const handleRequestTrade = async (skillId, providerId) => {
@@ -85,6 +92,17 @@ function TradesPage() {
     } catch (err) {
       setError(
         err.response?.data?.message || err.message || "Failed to update trade"
+      );
+    }
+  };
+  // Delete a trade request.
+  const handleDeleteTrade = async (tradeId) => {
+    try {
+      await api.delete(`/trades/${tradeId}`);
+      await fetchData();
+    } catch (err) {
+      setError(
+        err.response?.data?.message || err.message || "Failed to delete trade"
       );
     }
   };
@@ -247,6 +265,9 @@ function TradesPage() {
                 <span style={{ ...styles.badge, ...statusColor(trade.status) }}>
                   {trade.status}
                 </span>
+                <button onClick={() => handleDeleteTrade(trade.id)}>
+                  Delete
+                </button>
               </div>
             ))}
           </section>
@@ -266,7 +287,7 @@ const statusColor = (status) => {
 
 const styles = {
   trades: {
-    maxHeight: "70vh",
+    maxHeight: "60vh",
     overflow: "scroll",
   },
 
