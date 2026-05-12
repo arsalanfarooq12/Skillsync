@@ -1,7 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  // baseURL: "http://localhost:3000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
   withCredentials: true,
 });
 
@@ -17,7 +18,7 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
+// sends refresh request if access token is expired and retries original request with new token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {

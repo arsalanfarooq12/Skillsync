@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/apiClient";
-
+import { confirmAction } from "../utils/swal";
 function TradesPage() {
   const { user, logout } = useAuth();
 

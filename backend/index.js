@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.set("trust proxy", 1);
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 300,
+  limit: 500,
   message: {
     message:
       "Too many requests from this IP, please try again after 15 minutes",
