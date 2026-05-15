@@ -2,7 +2,6 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
-// console.log("Current DB URL:", process.env.DATABASE_URL);
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
