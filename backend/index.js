@@ -15,13 +15,19 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowed = ["http://localhost:5173", "https://skillsy.netlify.app/"];
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://skillsy.netlify.app",
+      ];
 
-      if (!origin || allowed.includes(origin)) {
-        callback(null, true); // Allow
+      console.log("Request Origin:", origin); // DEBUG - check console
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
       } else {
-        callback(new Error("CORS blocked")); // Block
+        console.log("Blocked origin:", origin); // DEBUG
+        callback(new Error("Not allowed"));
       }
     },
     credentials: true,
