@@ -38,7 +38,7 @@ model Trade {
   createdAt   DateTime    @default(now())
   provider    User        @relation("Provider", fields: [providerId], references: [id])
   requester   User        @relation("Requester", fields: [requesterId], references: [id])
-  skill       Skill       @relation(fields: [skillId], references: [id])
+  skill       Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
 }
 
 enum TradeStatus {

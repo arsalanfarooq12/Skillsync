@@ -58,12 +58,16 @@ function TradesPage() {
   };
   //
   const handleDeleteSkill = async (skillId) => {
-    const ok = await confirmAction({
-      title: "Delete this skill?",
-      text: "This will remove the skill permanently.",
-      confirmButtonText: "Delete",
-    });
-    if (!ok) {
+    // const ok = await confirmAction({
+    //   title: "Delete this skill?",
+    //   text: "This will remove the skill permanently.",
+    //   confirmButtonText: "Delete",
+    // });
+    if (
+      confirm(
+        "Are you sure you want to delete this skill? This action cannot be undone."
+      )
+    ) {
       try {
         await api.delete(`/skills/${skillId}`);
         await fetchData();
