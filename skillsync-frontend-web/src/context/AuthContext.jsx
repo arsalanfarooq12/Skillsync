@@ -37,13 +37,15 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try {
-      await api.post("/auth/logout");
-      toast.success("Logged out successfully");
-    } finally {
-      localStorage.removeItem("accessToken");
-      setToken(null);
-      setUser(null);
+    if (confirm("Are you sure you want to log out?")) {
+      try {
+        await api.post("/auth/logout");
+        toast.success("Logged out successfully");
+      } finally {
+        localStorage.removeItem("accessToken");
+        setToken(null);
+        setUser(null);
+      }
     }
   };
 

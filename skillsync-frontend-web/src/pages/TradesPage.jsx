@@ -197,7 +197,7 @@ function TradesPage() {
                             handleRequestTrade(skill.id, skill.userId)
                           }
                         >
-                          Request swap
+                          Request
                         </button>
                       )}
 
@@ -291,22 +291,25 @@ const styles = {
     overflow: "scroll",
   },
 
-  page: { minHeight: "100vh", background: "#f4f4f5" },
+  page: { minHeight: "100vh", background: "#fea49f" },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     padding: "1rem 2rem",
-    background: "#fff",
+    background: "#101357",
     borderBottom: "1px solid #e4e4e7",
+    color: "#fff",
   },
   logo: { fontSize: "1.25rem", fontWeight: "700" },
   headerRight: { display: "flex", alignItems: "center", gap: "1rem" },
   userName: { fontSize: "0.9rem", color: "#71717a" },
   logoutBtn: {
     padding: "6px 14px",
-    background: "transparent",
-    border: "1px solid #d4d4d8",
+    background: "#dc2626",
+    color: "#fff",
+
+    border: "1px solid #dc2626",
     borderRadius: "6px",
     cursor: "pointer",
     fontSize: "0.875rem",
@@ -318,7 +321,7 @@ const styles = {
     gap: "1.5rem",
   },
   section: {
-    background: "#fff",
+    background: "#fff5d7",
     borderRadius: "12px",
     padding: "1.25rem",
     border: "1px solid #e4e4e7",

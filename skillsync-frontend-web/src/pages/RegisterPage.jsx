@@ -90,7 +90,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#f4f4f5",
+    background: "#d0bdf4",
   },
   card: {
     background: "#fff",

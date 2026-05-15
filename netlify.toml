@@ -1,3 +1,4 @@
+# This configuration sets up a redirect for all incoming requests to the index.html file, allowing for client-side routing in a single-page application.
 [[redirects]]
   from = "/*"
   to = "/index.html"
