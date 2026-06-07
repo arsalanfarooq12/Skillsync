@@ -29,7 +29,7 @@ export default function LandingPage() {
           <Link
             to="/login"
             className="btn-ghost "
-            style={{ padding: "0.9rem 2rem", marginRight: "1rem" }}
+            style={{ padding: "0.6rem 2rem", marginRight: "1rem" }}
           >
             Log in
           </Link>
