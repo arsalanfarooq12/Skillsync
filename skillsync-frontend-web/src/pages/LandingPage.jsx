@@ -91,11 +91,11 @@ export default function LandingPage() {
         </div>
 
         <div className="hero-float">
-          <div className="skill-pill">
+          {/* <div className="skill-pill">
             <span className="icon">🎸</span>
             <span className="name">Guitar Basics</span>
             <span className="badge">Live now</span>
-          </div>
+          </div> */}
 
           <div className="skill-pill">
             <span className="icon">🎨</span>

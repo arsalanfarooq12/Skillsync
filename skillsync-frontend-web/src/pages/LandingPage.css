@@ -703,7 +703,9 @@ footer p {
   .hero-sub {
     max-width: 100%;
   }
-
+  .skill-pill {
+    display: none;
+  }
   .hero-actions {
     flex-direction: column;
     width: 100%;
