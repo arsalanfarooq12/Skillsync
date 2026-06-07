@@ -1,6 +1,5 @@
 import "./LandingPage.css";
 import { Link } from "react-router-dom";
-import RegisterPage from "./RegisterPage";
 
 export default function LandingPage() {
   const focusEmail = () => {
@@ -26,7 +25,7 @@ export default function LandingPage() {
             <a href="#community">Community</a>
           </li>
         </ul>
-        <div>
+        <div className="nav-actions">
           <Link
             to="/login"
             className="btn-ghost "

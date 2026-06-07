@@ -38,8 +38,12 @@ function RegisterPage() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>SkillSync</h1>
-        <p style={styles.subtitle}>Create your account</p>
+        <h1 style={styles.title}>
+          Skill<span style={{ color: "#A47DAB" }}>Sync</span>
+        </h1>
+        <p style={styles.subtitle}>
+          Join thousands of learners sharing skills and growing together.
+        </p>
 
         {error && <p style={styles.error}>{error}</p>}
 
@@ -72,7 +76,7 @@ function RegisterPage() {
             required
           />
           <button style={styles.button} type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Register"}
+            {loading ? "Creating Account..." : "Create Free Account →"}
           </button>
         </form>
 
@@ -90,36 +94,51 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#d0bdf4",
+    background: "#332736", // deep
+    backgroundImage: `
+      radial-gradient(circle at 80% 20%, rgba(164,125,171,0.18), transparent 35%),
+      radial-gradient(circle at 20% 80%, rgba(61,86,47,0.22), transparent 40%)
+    `,
+    padding: "2rem",
+    fontFamily: "'DM Sans', sans-serif",
   },
   card: {
-    background: "#fff",
-    padding: "2.5rem",
-    borderRadius: "12px",
     width: "100%",
-    maxWidth: "400px",
-    border: "1px solid #e4e4e7",
+    maxWidth: "430px",
+    background: "rgba(30,24,32,0.95)",
+    backdropFilter: "blur(12px)",
+    border: "1px solid rgba(164,125,171,0.25)",
+    borderRadius: "24px",
+    padding: "2.5rem",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
   },
-  title: { fontSize: "1.5rem", fontWeight: "700", marginBottom: "4px" },
+  title: {
+    fontSize: "2rem",
+    fontWeight: "800",
+    color: "#F5F2E8",
+    textAlign: "center",
+    marginBottom: "0.4rem",
+    letterSpacing: "-1px",
+    fontFamily: "'Syne', sans-serif",
+  },
   subtitle: { color: "#71717a", marginBottom: "1.5rem", fontSize: "0.9rem" },
   form: { display: "flex", flexDirection: "column", gap: "12px" },
   input: {
-    padding: "10px 14px",
-    borderRadius: "8px",
-    border: "1px solid #d4d4d8",
-    fontSize: "0.95rem",
-    outline: "none",
+    padding: "14px 16px",
+    borderRadius: "12px",
+    border: "1px solid rgba(164,125,171,.2)",
+    background: "rgba(245,242,232,.05)",
+    color: "#F5F2E8",
   },
   button: {
-    padding: "10px",
-    background: "#534AB7",
-    color: "#fff",
+    padding: "14px",
+    borderRadius: "999px",
+    background: "#A47DAB",
+    color: "#332736",
+    fontWeight: "700",
     border: "none",
-    borderRadius: "8px",
-    fontWeight: "600",
-    fontSize: "0.95rem",
     cursor: "pointer",
-    marginTop: "4px",
+    marginTop: "10px",
   },
   error: {
     background: "#fef2f2",
@@ -134,6 +153,14 @@ const styles = {
     textAlign: "center",
     fontSize: "0.875rem",
     color: "#71717a",
+  },
+  features: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    marginBottom: "1.5rem",
+    color: "#332736",
+    fontSize: "0.9rem",
   },
 };
 
