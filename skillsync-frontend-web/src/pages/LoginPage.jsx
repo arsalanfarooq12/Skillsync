@@ -34,7 +34,10 @@ function LoginPage() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>SkillSync</h1>
+        <h1 style={styles.title}>
+          Skill<span style={{ color: "#A47DAB" }}>Sync</span>
+        </h1>
+
         <p style={styles.subtitle}>Sign in to your account</p>
 
         {error && <p style={styles.error}>{error}</p>}
@@ -64,7 +67,17 @@ function LoginPage() {
         </form>
 
         <p style={styles.link}>
-          No account yet? <Link to="/register">Register</Link>
+          No account yet?{" "}
+          <Link
+            to="/register"
+            style={{
+              color: "#A47DAB",
+              textDecoration: "none",
+              fontWeight: "600",
+            }}
+          >
+            Register
+          </Link>
         </p>
       </div>
     </div>
@@ -77,50 +90,87 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#d0bdf4",
+    background: "#332736", // deep
+    backgroundImage: `
+      radial-gradient(circle at 80% 20%, rgba(164,125,171,0.18), transparent 35%),
+      radial-gradient(circle at 20% 80%, rgba(61,86,47,0.22), transparent 40%)
+    `,
+    padding: "2rem",
+    fontFamily: "'DM Sans', sans-serif",
   },
+
   card: {
-    background: "#fff",
-    padding: "2.5rem",
-    borderRadius: "12px",
     width: "100%",
-    maxWidth: "400px",
-    border: "1px solid #e4e4e7",
+    maxWidth: "430px",
+    background: "rgba(30,24,32,0.95)",
+    backdropFilter: "blur(12px)",
+    border: "1px solid rgba(164,125,171,0.25)",
+    borderRadius: "24px",
+    padding: "2.5rem",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
   },
-  title: { fontSize: "1.5rem", fontWeight: "700", marginBottom: "4px" },
-  subtitle: { color: "#71717a", marginBottom: "1.5rem", fontSize: "0.9rem" },
-  form: { display: "flex", flexDirection: "column", gap: "12px" },
+
+  title: {
+    fontSize: "2rem",
+    fontWeight: "800",
+    color: "#F5F2E8",
+    textAlign: "center",
+    marginBottom: "0.4rem",
+    letterSpacing: "-1px",
+    fontFamily: "'Syne', sans-serif",
+  },
+
+  subtitle: {
+    color: "rgba(245,242,232,0.65)",
+    textAlign: "center",
+    marginBottom: "2rem",
+    fontSize: "0.95rem",
+  },
+
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "14px",
+  },
+
   input: {
-    padding: "10px 14px",
-    borderRadius: "8px",
-    border: "1px solid #d4d4d8",
+    padding: "14px 16px",
+    borderRadius: "12px",
+    border: "1px solid rgba(164,125,171,0.2)",
+    background: "rgba(245,242,232,0.05)",
+    color: "#F5F2E8",
     fontSize: "0.95rem",
     outline: "none",
   },
+
   button: {
-    padding: "10px",
-    background: "#534AB7",
-    color: "#fff",
+    padding: "14px",
+    marginTop: "8px",
+    borderRadius: "50px",
     border: "none",
-    borderRadius: "8px",
-    fontWeight: "600",
+    background: "#A47DAB",
+    color: "#332736",
+    fontWeight: "700",
     fontSize: "0.95rem",
     cursor: "pointer",
-    marginTop: "4px",
+    transition: "all .2s ease",
   },
+
   error: {
-    background: "#fef2f2",
-    color: "#b91c1c",
-    padding: "10px 14px",
-    borderRadius: "8px",
-    fontSize: "0.875rem",
+    background: "rgba(220,38,38,0.15)",
+    border: "1px solid rgba(220,38,38,0.3)",
+    color: "#fca5a5",
+    padding: "12px",
+    borderRadius: "12px",
+    fontSize: "0.9rem",
     marginBottom: "1rem",
   },
+
   link: {
-    marginTop: "1.25rem",
+    marginTop: "1.5rem",
     textAlign: "center",
-    fontSize: "0.875rem",
-    color: "#71717a",
+    color: "rgba(245,242,232,0.65)",
+    fontSize: "0.9rem",
   },
 };
 

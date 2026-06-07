@@ -6,14 +6,14 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
 import TradesPage from "./pages/TradesPage";
-
+import LandingPage from "./pages/LandingPage";
 function App() {
   return (
     <>
       <ToastContainer position="top-right" autoClose={4000} />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/trades" replace />} />
+          <Route path="/" element={<LandingPage />} />
 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
